@@ -1,0 +1,85 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+}
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        applicationId rootProject.ext.applicationId
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
+    }
+
+    buildTypes {
+        getByName("debug"){
+            signingConfig = signingConfigs["debug"]
+            buildConfigField(
+                    "String",
+                    "BASE_URL",
+                    "\"https://developerslife.ru\""
+            )
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildFeatures {
+        viewBinding true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+}
+
+dependencies {
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_version"
+    implementation appDependencies.androidCoreKtx
+    implementation appDependencies.appcompat
+    implementation appDependencies.material
+    implementation appDependencies.constraintlayout
+    implementation appDependencies.livedataKtx
+    implementation appDependencies.viewmodelKtx
+    implementation appDependencies.navigationFragmentKtx
+    implementation appDependencies.navigationUIKtx
+    implementation appDependencies.viewbinding
+
+    implementation 'androidx.multidex:multidex:2.0.1'
+
+    // ---Hilt
+    implementation(appDependencies.hiltDagger)
+    kapt(appDependencies.hiltDaggerCompiler)
+
+    kapt(appDependencies.hiltCompiler)
+    kapt("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.3.0")
+
+    // --Android architecture component
+    implementation appDependencies.lifecycleExtensions
+
+    // --Timber
+    implementation appDependencies.timber
+
+    //retrofit
+    implementation dataDependencies.retrofit
+    implementation dataDependencies.moshiConverter
+    implementation dataDependencies.moshiAdapter
+    implementation dataDependencies.okhttp
+    kapt(dataDependencies.moshiCompiler)
+
+    implementation project(':presentation')
+    implementation project(':data')
+    implementation project(':domain')
+}
